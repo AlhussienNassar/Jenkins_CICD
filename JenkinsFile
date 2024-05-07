@@ -21,6 +21,7 @@ pipeline {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
                     // Handle test failures here
                     echo 'Test failed, but marking build as unstable'
+                    sh "exit 1"
                 }
             }
         }
