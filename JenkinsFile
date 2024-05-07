@@ -1,29 +1,33 @@
 pipeline {
     agent any
-    
     stages {
         stage('Setup') {
             steps {
-                echo 'setup'
+                echo 'Setting up...'
+                // Add any setup steps here
             }
         }
         stage('Build') {
             steps {
-                echo 'build'
+                echo 'Building...'
+                // Add build steps here
             }
         }
         stage('Test') {
             steps {
-                echo 'errrrrrrrrrrrrrrror
-                catchError(buildResult: 'UNSTABLE') {
-                    
-                    
+                echo 'Testing...'
+                // Add test steps here
+                // If a test fails, proceed to the next step
+                catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+                    // Handle test failures here
+                    echo 'Test failed, but marking build as unstable'
                 }
             }
         }
         stage('Deploy') {
             steps {
-                echo 'deploy'
+                echo 'Deploying...'
+                // Add deployment steps here
             }
         }
     }
