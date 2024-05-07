@@ -1,31 +1,56 @@
 pipeline {
     agent any
+
     stages {
-        stage('Setup') {
-            steps {
-                echo 'Setup'
-                
-            }
-        }
         stage('Build') {
             steps {
-                echo 'Build'
+                echo 'Building..'
                 
             }
         }
         stage('Test') {
             steps {
-                echo 'Test'
-                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                    echo 'Test failed, but marking build as unstable'
-                    sh "exit 1"
+                script {
+                    try {
+                        echo 'Testing..'
+                        sh 'exit 0' 
+                    } catch (Exception e) {
+                        ansiColor('red') {
+                            echo "Test failed"
+                            currentBuild.result = 'UNSTABLE'
+                            error "Test failed"
+                        }
+                    }
                 }
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying'
+    }
+    
+    post {
+        success {
+            script {
+                emailext (
+                    to: 'alhussienstudy615@gmail.com',
+                    subject: "Pipeline Successful: ${env.JOB_NAME} ${env.BUILD_NUMBER}",
+                    body: "Congratulations! Your pipeline ${env.JOB_NAME} with build number ${env.BUILD_NUMBER} has successfully completed.",
+                )
             }
         }
+        failure {
+            script {
+                emailext (
+                    to: 'alhussienstudy615@gmail.com',
+                    subject: "Pipeline Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER}",
+                    body: "Sorry! Your pipeline ${env.STAGE_NAME} with build number ${env.BUILD_NUMBER} has failed. Please check the Jenkins console output for more details.",
+                )
+            }
+        }
+unstable {
+            emailext (
+                to: 'alhussienstudy615@gmail.com',
+                subject: "Build ${currentBuild.fullDisplayName} ${currentBuild.result}",
+                body: "Build ${currentBuild.fullDisplayName} finished with result: ${currentBuild.result}",
+            )
+ }
     }
 }
