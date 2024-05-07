@@ -1,11 +1,30 @@
 pipeline {
- agent any
- stages {
- stage('build') {
- steps {
- echo "Final_Test"
- }
- }
- }
+    agent any
+    
+    stages {
+        stage('Setup') {
+            steps {
+                echo 'setup'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'build'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'errrrrrrrrrrrrrrror
+                catchError(buildResult: 'UNSTABLE') {
+                    
+                    
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'deploy'
+            }
+        }
+    }
 }
-
